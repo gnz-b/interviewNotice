@@ -1,8 +1,8 @@
-# css， 样式相关
+# css样式相关
 
 ## DOM的reflow & repaint
 
-[参考链接](https://juejin.im/entry/58d8d4b3570c350058e27ec6)
+[参考文章](https://juejin.im/entry/58d8d4b3570c350058e27ec6)
 
 reflow对性能的开销会比repaint大
 
@@ -249,7 +249,7 @@ Cat 中加个eat的方法
 
 ```
   var O = function() {};
-  O.prototype = Animal.prototype;
+  O.prototype = new Animal(); // 需要一个实例化的对象 不然属性type无法被继承
   Cat.prototype = new O();
   // 把Cat的构造函数重新指向Cat
   Cat.prototype.constructor = Cat;
