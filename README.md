@@ -48,7 +48,7 @@ getComputedStyle(), or currentStyle in IE
 [参考链接](https://segmentfault.com/a/1190000012213999)
 
 关键代码
-```
+```html
 <div class="container">
   <div class="center">center</div> //中间这一块写在最上面
   <div class="left">left</div>
@@ -131,7 +131,7 @@ fixed则是相对于屏幕进行定位， 屏幕滚动不会影响到fixed元素
 
 可以归纳为下面这个代码
 
-```
+```javascript
 function New (f) {
 	var n = { '__proto__': f.prototype }; //步骤1
 	return function () {
@@ -140,12 +140,40 @@ function New (f) {
 	};
 }
 ```
+### prototype 的其他注意点
+先看个题目      
+```javascript
+Object.prototype.a = 'a';
+Function.prototype.a = 'b';
+
+funtion Foo() {};
+var obj = new Foo();
+console.log(obj.a);// 'a'
+console.log(obj.b);// undefined
+console.log(Foo.a);// 'a'
+console.log(Foo.b);// 'b'
+```
+对象的__proto__指向自己构造函数的prototype。obj.\_\_proto\_\_.\_\_proto\_\_...的原型链由此产生，包括我们的操作符instanceof正是通过探测obj.\_\_proto\_\_.\_\_proto\_\_... === Constructor.prototype来验证obj是否是Constructor的实例。
+
+```javascript
+obj.__proto__ === Foo.prototype;
+obj.__proto__.__proto__ === Foo.prototype.__proto__ = Object.prototype;
+Object.prototype.__proto__ === null;
+
+```
+所以obj能够找到a的值，但是因为无法链到Function.prototype上，所以b的值就是undefined了。
+
+``` javascript
+Foo.__proto__ === Function.prototype; // 这就能找到b的值
+Foo.__proto__.__proto__ === Function.prototype.__proto__ === Object.prototype; // 所以a也找到了。
+```
+有个有趣的事实得记住Object.\_\_proto\_\_ === Function.prototype, 因为Object也是个构造函数。
 
 ## js对类型的封装
 
 ### 构造函数模式
 
-```
+```javascript
   function Cat(name, color) {
     this.name = name;
     this.color = color;
@@ -162,7 +190,7 @@ function New (f) {
 缺点：
 
 Cat 中加个eat的方法
-```
+```javascript
   function Cat(name, color) {
     this.name = name;
     this.color = color;
@@ -177,7 +205,7 @@ Cat 中加个eat的方法
 ### prototype模式
 
 可以将不变的属性直接加在prototype上
-```
+```javascript
   function Cat(name, color) {
     this.name = name;
     this.color = color;
@@ -195,7 +223,7 @@ Cat 中加个eat的方法
 
 [参考阮一峰博客](http://www.ruanyifeng.com/blog/2010/05/object-oriented_javascript_inheritance.html)
 
-```
+```javascript
   function Animal() {
     this.type = '动物';
   }
@@ -203,7 +231,7 @@ Cat 中加个eat的方法
 有个Cat类如何来继承Animal?
 
 ### 构造函数绑定
-```
+```javascript
   function Cat(name, color) {
     // 直接使用apply 来调用父类Animal
     Animal.apply(this, arguments);
@@ -216,9 +244,9 @@ Cat 中加个eat的方法
   alert(cat1.type); // 动物
 ```
 
-### phrototype 模式
+### prototype 模式
 
-```
+```javascript
   Cat.prototype = new Animal(); // 这里会改变constructor函数的指向 Animal
   Cat.prototype.constructor = Cat; // 重现将构造函数指向Cat
 
@@ -227,13 +255,13 @@ Cat 中加个eat的方法
 ```
 如果不重现分配constructor 则直接指向了 Animal
 
-```
+```javascript
   Cat.prototype = new Animal();
   alert(Cat.prototype.constructor === Animal) // true
 ```
 
 ### 直接继承prototype
-```
+```javascript
   Cat.prototype = Animal.prototype;
   Cat.prototype.constructor = Cat; // 还是需要修改constructor
   const cat1 = new Cat('bin1', 'black');
@@ -241,13 +269,13 @@ Cat 中加个eat的方法
 ```
 但是这种模式有个弊端 把Animal的构造函数也改了
 
-```
+```javascript
   alert(Animal.prototype.constructor === Cat); // true
 ```
 
 ### 利用空对象作为中介
 
-```
+```javascript
   var O = function() {};
   O.prototype = new Animal(); // 需要一个实例化的对象 不然属性type无法被继承
   Cat.prototype = new O();
@@ -258,7 +286,7 @@ Cat 中加个eat的方法
 ### 拷贝继承
 将父类prototype上的属性全部复制下来
 
-```
+```javascript
   function extend(child, parent) {
     let c = child.prototype;
     let p = parent.prototype;
@@ -270,7 +298,7 @@ Cat 中加个eat的方法
 ```
 
 ### 没有构造函数的继承
-
+``` javascript
 var Person = {
     nation: 'china'
   }
@@ -278,7 +306,7 @@ var Person = {
 var Doctor = {
   career: 'doctor'
 }
-
+```
 Doctor 如何继承 Person？
 
 1. object 方法
@@ -302,7 +330,7 @@ Doctor 如何继承 Person？
 ```
 
 3.深拷贝
-```
+``` javascript
   function deepCopy(parent, c) {
     var child = c || {};
     for (let i in parent) {
