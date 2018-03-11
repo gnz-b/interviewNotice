@@ -343,3 +343,52 @@ Doctor 如何继承 Person？
     return child;
   }
 ```
+# REACT
+## 组件的生命周期
+
+### 实例化
+#### 首次实例化
+
+getDefaultProps
+
+getInitialState
+
+componentWillMount
+
+render
+
+componentDidMount
+
+#### 实例化完成后的更新
+
+getInitialState
+
+componentWillMount
+
+render
+
+componentDidMount
+
+### 存在期
+#### 组件已存在时的状态改变
+
+componentWillReceiveProps
+
+shouldComponentUpdate
+
+componentWillUpdate
+
+render
+
+componentDidUpdate
+### 销毁&清理期
+componentWillUnmount
+
+一般在DOM加载完之后 调用接口获取数据 所以在componentDidMount中调用接口
+
+willMount中setState并不会触发渲染， 而且willMount可能会被触发多次
+
+# HTTP相关
+
+## 浏览器对http请求并发的限制
+浏览器对同一域名的请求有并发限制 一般同一域名最多并发6个请求 所以有些资源会放在不同的域名下
