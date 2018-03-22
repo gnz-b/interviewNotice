@@ -88,6 +88,30 @@ relative是相对原来在文档流中的位置，进行位移
 
 fixed则是相对于屏幕进行定位， 屏幕滚动不会影响到fixed元素的定位
 
+### 清除浮动的css
+``` css
+	outer:after { 
+		clear:both;
+		content:'';
+		display:block;
+		width:0;
+		height:0;
+		visibility:hidden;
+	}
+```
+content:' . '；display:block; 对于FF/Chrome/opera/IE8不能缺少，其中content取值也可以为空。
+
+visibility:hidden;的作用是允许浏览器渲染它，但是不显示出来，这样才能实现清除浮动。 
+
+首先要显示伪元素，所以display:block，
+
+然后为伪元素加入空内容，以便伪元素中不会有内容显示在页面中，所以， content:""；
+
+其次，为使伪元素不影响页面布局，将伪元素高度设置为0，所以， height:0，
+
+最后，要清除浮动，所以，clear:both。
+
+
 # JS相关
 
 ## JavaScript 节流（throttle）
@@ -429,3 +453,49 @@ willMount中setState并不会触发渲染， 而且willMount可能会被触发�
 
 ## 浏览器对http请求并发的限制
 浏览器对同一域名的请求有并发限制 一般同一域名最多并发6个请求 所以有些资源会放在不同的域名下
+
+## HTTP 缓存机制
+### Expires
+　　Expires的值为服务端返回的到期时间，即下一次请求时，请求时间小于服务端返回的到期时间，直接使用缓存数据。
+不过Expires 是HTTP 1.0的东西，现在默认浏览器均默认使用HTTP 1.1，所以它的作用基本忽略。
+另一个问题是，到期时间是由服务端生成的，但是客户端时间可能跟服务端时间有误差，这就会导致缓存命中的误差。
+所以HTTP 1.1 的版本，使用Cache-Control替代。
+
+### Cache-Control
+Cache-Control 是最重要的规则。常见的取值有private、public、no-cache、max-age，no-store，默认为private。
+
+private:             客户端可以缓存
+
+public:              客户端和代理服务器都可缓存（前端的同学，可以认为public和private是一样的）
+
+max-age=xxx:   缓存的内容将在 xxx 秒后失效
+
+no-cache:          需要使用对比缓存来验证缓存数据（不会触发from cache 都会去服务器请求一次）
+
+no-store:           所有内容都不会缓存，强制缓存，对比缓存都不会触发（对于前端开发来说，缓存越多越好，so...基本上和它说886）
+
+### Last-Modified  /  If-Modified-Since
+Last-Modified：
+
+服务器在响应请求时，告诉浏览器资源的最后修改时间。
+
+If-Modified-Since：
+
+再次请求服务器时，通过此字段通知服务器上次请求时，服务器返回的资源最后修改时间。
+服务器收到请求后发现有头If-Modified-Since 则与被请求资源的最后修改时间进行比对。
+若资源的最后修改时间大于If-Modified-Since，说明资源又被改动过，则响应整片资源内容，返回状态码200；
+若资源的最后修改时间小于或等于If-Modified-Since，说明资源无新修改，则响应HTTP 304，告知浏览器继续使用所保存的cache。
+
+### Etag  /  If-None-Match（优先级高于Last-Modified  /  If-Modified-Since）
+如果资源变化时间小于1s 需要使用Etag来进行比对
+Etag：
+
+服务器响应请求时，告诉浏览器当前资源在服务器的唯一标识（生成规则由服务器决定）。
+
+If-None-Match：
+
+再次请求服务器时，通过此字段通知服务器客户段缓存数据的唯一标识。
+服务器收到请求后发现有头If-None-Match 则与被请求资源的唯一标识进行比对，
+不同，说明资源又被改动过，则响应整片资源内容，返回状态码200；
+相同，说明资源无新修改，则响应HTTP 304，告知浏览器继续使用所保存的cache。
+
