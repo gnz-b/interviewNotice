@@ -367,7 +367,17 @@ Doctor 如何继承 Person？
     return child;
   }
 ```
+## JSON.parse(JSON.stringify)深拷贝的局限
+1. 可以用这个技巧进行数据对象的拷贝
+2. 如果被拷贝的对象中有function，则拷贝之后的对象就会丢失这个function
+3. 如果被拷贝的对象中有正则表达式，则拷贝之后的对象正则表达式会变成Object
 
+``` javascript
+let a = {name: 'bin.zhu', sayName: function() {alert(this.name)}, numberReg: /\d+/}
+let b = JSON.parse(JSON.stringify(a))
+// sayName丢失，numberReg变为了对象
+b // {name: 'bin.zhu', numberReg: {}} 
+```
 ## js中this的指向问题
 this的指向分为三种情况
 ### 直接调用 
