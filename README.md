@@ -235,7 +235,7 @@ Cat 中加个eat的方法
     this.color = color;
   }
 
-  Cat.phrototype.eat = function() {return 'eat'};
+  Cat.prototype.eat = function() {return 'eat'};
 
   let cat1 = new Cat('bin1', 'red');
   let cat2 = new Cat('bin2', 'white');
