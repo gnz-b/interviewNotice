@@ -412,7 +412,46 @@ async 异步加载，加载完就执行（async 对于应用脚本的用处不�
 ## require和import的不同
 
 require 是运行时才加载（动态加载）
-import 是静态加载
+
+import 是静态加载（可以在编译时进行优化）
+
+## 有关作用域的面试题
+
+```javascript
+function Foo() {
+  getName = function() {alert(1)}; // 全局
+  return this;
+}
+
+Foo.getName = function() { alert(2) };
+Foo.prototype.getName = function() {alert(3)};
+var getName = function() {alert(4)};
+function getName() {alert(5)};
+
+Foo.getName(); //2 
+getName(); // 4 
+Foo().getName();// 1
+getName(); //1
+new Foo.getName(); //2
+new Foo().getName(); //3
+new new Foo().getName(); //3
+```
+1. Foo.getName()直接调用Foo.getName，所以是2
+2. 这边涉及到了变量提升和函数提升,代码会变成如下情况
+``` javascript
+var getName; // 变量声明的提升
+function getName() { alert(5) }; // 函数声明提升
+getName = function() { alert(4) };// getName被重新赋值 所以alert 4
+
+```
+
+3. Foo中的getName其实是个全局变量，因为调用了Foo(),所以getName被重新赋值成了alert(1)
+
+4. new Foo.getName()等于 new (Foo.getName()), .运算符的优先级高于new运算，所以等于调用了Foo.getName() { alert(2) }
+
+5. new Foo().getName() 等于(new Foo()).getName(), 所以调用Foo实例上的getName方法。因为本身Foo中并没有声明getName方法，往上就找到prototype上getName alert(3)
+
+6. new new Foo().getName()等于new (new Foo()).getName()，所以跟上一问的答案一样
 
 # REACT
 ## 组件的生命周期
