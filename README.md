@@ -56,10 +56,55 @@ getComputedStyle(), or currentStyle in IE
 </div>
 ```
 
-#### 相同 
+#### 关键点
 三块div都是float: left;
-left margin-left: -100%
-right margin-left: -自己的宽度
+
+center: width为100%，而且div要放在left和right前面；
+
+left: margin-left: -100%；
+
+right: margin-left: -100px （自己的宽度）；
+
+其实做到这一步已经差不多了。
+但是。。。中间的部分两边有被遮挡住， 所以设置container两边的padding为100px。left和right也会都往中间挤， 再把他们的position设置为relative，一个往左拉100px，另外一个往右拉100px，就完成了。
+
+完整css如下
+```css
+.container {
+	padding: 0 100px;
+}
+.container::after {
+	clear: both;
+	content: '';
+	display: block;
+	visibility: hidden;
+	height: 0;
+	width: 0;
+}
+.center {
+	float: left;
+	height: 100px;
+	width: 100%;
+}
+.left {
+	float: left;
+	background-color: aqua;
+	height: 100px;
+	width: 100px;
+	margin-left: -100%;
+	position: relative;
+	left: -100px
+}
+.right {
+	float: left;
+	background-color: aqua;
+	height: 100px;
+	width: 100px;
+	margin-left: -100px;
+	position: relative;
+	right: -100px;
+}
+```
 
 #### 区别 
 双飞翼： 更简单一点 container使用margin空出两拦的宽度, that's all;
