@@ -194,7 +194,7 @@ visibility:hidden;的作用是允许浏览器渲染它，但是不显示出来�
 [参考链接](https://axiu.me/coding/what-new-done-in-javascript/)
 
 [MDN 对new运算的解释](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new)
-1.将对象的 __phroto__  属性设置为函数的phrototype
+1.将对象的 __proto__  属性设置为函数的prototype
 2.把this指向该对象
 3.返回这个对象
 
