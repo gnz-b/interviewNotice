@@ -24,3 +24,36 @@ height不要使用100vh
 
 
 如果使用React的话，注意高度的属性不要放在render中赋值，防止state更新时把高度也更新了，导致固定在底部的原素浮上来。
+
+## 计算二进制数中1的个数
+
+### 算法1
+从低位往高位，和1按位&来计算位数
+
+```javascript
+function countOne(n) {
+  let count = 0;
+  while(n) {
+    if (n & 1) {
+      count++;
+    }
+    n = n>>1; // n往右移动1位
+  }
+  return count;
+}
+```
+
+### 算法2
+原理不明白
+
+```javascript
+function countOne2(n) {
+  let num = n;
+  let count = 0;
+  while (num) {
+    num = num & (num - 1);
+    count++;
+  }
+  return count;
+}
+```
